@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const User = require("../models/user")
+const Post = require("../models/post")
 
 const generateJwt = (id, email) => {
   return jwt.sign({ id, email }, process.env.SECRET_KEY, { expiresIn: "24h" })
@@ -48,6 +49,27 @@ class UserController {
     try {
       const token = generateJwt(req.user._id, req.user.email)
       return res.json({ token })
+    } catch (e) {
+      return res.send({ err: e.message })
+    }
+  }
+
+  async likePost(req, res) {
+    try {
+      const { userId, postId } = req.body
+      const user = await User.findOne({ _id: userId })
+      if (user.likedPosts.find(id => id === postId)) {
+        return res.send({ err: "post already liked" })
+      } else {
+        Post.findOne({ _id: postId })
+          .then((post) => {
+            post.likes += 1
+            post.save()
+          })
+        user.likedPosts.push(postId)
+        user.save()
+        return res.sendStatus(200)
+      }
     } catch (e) {
       return res.send({ err: e.message })
     }

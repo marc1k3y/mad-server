@@ -16,6 +16,10 @@ const UserSchema = new Schema({
   },
   avatar: {
     type: String
+  },
+  likedPosts: {
+    type: Array,
+    default: []
   }
 })
 
