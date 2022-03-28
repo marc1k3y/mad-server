@@ -16,8 +16,19 @@ const PostSchema = new Schema({
   },
   desc: {
     type: String
+  },
+  tgLink: {
+    type: String,
+    required: true
+  },
+  likes: {
+    type: Number,
+    default: 0
+  },
+  owner: {
+    type: String
   }
-})
+}, { timestamps: true })
 
 const Post = mongoose.model('post', PostSchema)
 
