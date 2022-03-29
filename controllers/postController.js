@@ -1,6 +1,7 @@
 const path = require("path")
 const uuid = require("uuid")
 const Post = require("../models/post")
+const User = require("../models/user")
 
 class PostController {
   async create(req, res) {
@@ -18,11 +19,33 @@ class PostController {
       return res.send({ err: e.message })
     }
   }
+  
   async getAll(req, res) {
     try {
       const { limit, skip } = req.query
       Post.find({}).limit(limit).skip(skip)
         .then((posts) => res.send({ posts }))
+    } catch (e) {
+      return res.send({ err: e.message })
+    }
+  }
+
+  async likePost(req, res) {
+    try {
+      const { email, postId } = req.body
+      const user = await User.findOne({ email })
+      if (user.likedPosts.find(id => id === postId)) {
+        return res.send({ err: "post already liked" })
+      } else {
+        Post.findOne({ _id: postId })
+          .then((post) => {
+            post.likes += 1
+            post.save()
+          })
+        user.likedPosts.push(postId)
+        user.save()
+        return res.sendStatus(200)
+      }
     } catch (e) {
       return res.send({ err: e.message })
     }
