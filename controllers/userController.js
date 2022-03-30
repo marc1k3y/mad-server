@@ -52,6 +52,17 @@ class UserController {
       return res.send({ err: e.message })
     }
   }
+
+  async likedPosts(req, res) {
+    try {
+      const { email } = req.query
+      const user = await User.findOne({ email })
+      const likedPosts = user.likedPosts
+      return res.send({ likedPosts })
+    } catch (e) {
+      return res.send({ err: e.message })
+    }
+  }
 }
 
 module.exports = new UserController()

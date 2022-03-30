@@ -19,7 +19,7 @@ class PostController {
       return res.send({ err: e.message })
     }
   }
-  
+
   async getAll(req, res) {
     try {
       const { limit, skip } = req.query
@@ -46,6 +46,23 @@ class PostController {
         user.save()
         return res.sendStatus(200)
       }
+    } catch (e) {
+      return res.send({ err: e.message })
+    }
+  }
+
+  async dislikePost(req, res) {
+    try {
+      const { email, postId } = req.body
+      const user = await User.findOne({ email })
+      Post.findOne({ _id: postId })
+        .then((post) => {
+          post.likes -= 1
+          post.save()
+        })
+      user.likedPosts = user.likedPosts.filter(id => id !== postId)
+      user.save()
+      return res.sendStatus(200)
     } catch (e) {
       return res.send({ err: e.message })
     }
