@@ -32,8 +32,8 @@ class PostController {
 
   async likePost(req, res) {
     try {
-      const { email, postId } = req.body
-      const user = await User.findOne({ email })
+      const { userId, postId } = req.body
+      const user = await User.findOne({ _id: userId })
       if (user.likedPosts.find(id => id === postId)) {
         return res.send({ err: "post already liked" })
       } else {
@@ -53,8 +53,8 @@ class PostController {
 
   async dislikePost(req, res) {
     try {
-      const { email, postId } = req.body
-      const user = await User.findOne({ email })
+      const { userId, postId } = req.body
+      const user = await User.findOne({ _id: userId })
       Post.findOne({ _id: postId })
         .then((post) => {
           post.likes -= 1
